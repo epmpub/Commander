@@ -1,7 +1,8 @@
 ﻿using Serilog;
+using Serilog.Events;
 using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Commander
 {
@@ -9,26 +10,19 @@ namespace Commander
     {
         public Executor(Config c)
         {
-            var Logger = new MyLogger();
-            Logger.Setup(c);
+            Log.Logger = new LoggerConfiguration()
+                 .MinimumLevel.Debug()
+                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                 .Enrich.FromLogContext()
+                 //.WriteTo.Console()
+                 .WriteTo.File(c.logger + c.logger_name, encoding: Encoding.UTF8)
+                 .CreateLogger();
         }
-
-        //private static void LoggerSetup(Config c)
-        //{
-        //    Log.Logger = new LoggerConfiguration()
-        //     .MinimumLevel.Debug()
-        //     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        //     .Enrich.FromLogContext()
-        //     .WriteTo.Console()
-        //     .WriteTo.File(c.Logger + "\\pwshCMD-stdout.txt", encoding: Encoding.UTF8)
-        //     .CreateLogger();
-        //}
 
         public void RunPWSHCommand(string command)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "cmd.exe";
-            //startInfo.Arguments = @"/c powershell  -NoLogo -NoProfile -executionpolicy unrestricted " + "path";
             startInfo.Arguments = @"/c powershell  -NoLogo -NoProfile -executionpolicy unrestricted -Command " + command;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
@@ -47,7 +41,6 @@ namespace Commander
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "cmd.exe";
-            //startInfo.Arguments = @"/c powershell  -NoLogo -NoProfile -executionpolicy unrestricted " + "path";
             startInfo.Arguments = @"/c " + command;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
@@ -66,7 +59,6 @@ namespace Commander
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "cmd.exe";
-            //startInfo.Arguments = @"/c powershell  -NoLogo -NoProfile -executionpolicy unrestricted " + "path";
             startInfo.Arguments = @"/c cscript " + command;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
@@ -91,7 +83,7 @@ namespace Commander
                 switch (item["Command"].Type)
                 {
                     case "PWSH":
-                        //Console.WriteLine("PWSH");
+                        Console.WriteLine(item["Command"].reserve);
                         RunPWSHCommand(item["Command"].Cmd);
                         break;
                     case "BAT":
@@ -134,12 +126,6 @@ namespace Commander
                         break;
                 }
             }
-
-            //Todo:Wait a while
-
-            Task.Delay(TimeSpan.FromSeconds(2));
-
-        
         }
     }
 }

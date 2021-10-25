@@ -7,8 +7,16 @@ namespace Commander
 {
     internal class MyLogger
     {
-        public MyLogger()
+        public MyLogger(Config c)
         {
+            Log.Logger = new LoggerConfiguration()
+             .MinimumLevel.Debug()
+             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+             .Enrich.FromLogContext()
+             //.WriteTo.Console()
+             .WriteTo.File(c.logger + c.logger_name, encoding: Encoding.UTF8)
+             .CreateLogger();
+            Console.WriteLine($"{c.logger} - {c.logger_name} - {c.logger_clean_time}");
         }
 
         internal void Setup(Config c)
@@ -18,19 +26,10 @@ namespace Commander
              .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
              .Enrich.FromLogContext()
              //.WriteTo.Console()
-             .WriteTo.File(c.Logger + "\\pwshCMD-stdout.txt", encoding: Encoding.UTF8)
+             .WriteTo.File(c.logger + c.logger_name, encoding: Encoding.UTF8)
              .CreateLogger();
-        }
-        //share global log settings.
-        internal void Setup()
-        {
-            Log.Logger = new LoggerConfiguration()
-             .MinimumLevel.Debug()
-             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-             .Enrich.FromLogContext()
-             .WriteTo.Console()
-             .WriteTo.File("c:\\log2\\netMQ-stdout.txt", encoding: Encoding.UTF8)
-             .CreateLogger();
+
+            Console.WriteLine($"{c.logger} - {c.logger_name} - {c.logger_clean_time}");
         }
     }
 }

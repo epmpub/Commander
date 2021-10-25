@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace Commander
 {
@@ -25,6 +26,20 @@ namespace Commander
 
 
 
+        }
+
+        internal static string DownloadString(string url)
+        {
+            var webClient = new WebClient();
+            string result = null;
+            try
+            {
+                result =  webClient.DownloadString(url);
+            }
+            catch
+            {
+            }
+            return result;
         }
     }
 }

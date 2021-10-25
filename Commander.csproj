@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Commander</RootNamespace>
     <AssemblyName>Commander</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>

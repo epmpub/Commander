@@ -39,9 +39,7 @@ namespace Commander
 
     internal class PushServ
     {
-        public PushServ()
-        {
-        }
+        public PushServ() { }
 
         internal void DoTest()
         {
@@ -53,36 +51,30 @@ namespace Commander
                 subSocket.Connect("tcp://sz.epm.pub:8081");
                 subSocket.Subscribe("");
                 Console.WriteLine("connect server");
-                
-                var myLogger = new MyLogger();
-                //TODO:: pass yaml config 
-                myLogger.Setup();
                 poller.RunAsync();
 
                 subSocket.ReceiveReady += (_, a) =>
                 {
                     string message = a.Socket.ReceiveFrameString();
 
-                    var msg = JsonConvert.DeserializeObject<CommandX>(message);
+                    var commandx = JsonConvert.DeserializeObject<CommandX>(message);
 
-                    //Console.WriteLine($"{msg.Id},{msg.Name},{msg.Url}");
+                    Console.WriteLine($"{commandx.Id},{commandx.Name},{commandx.Url}");
 
-                    if (msg.Id == 1)
+                    if (commandx.Id == 1)
                     {
-                        //start registe scheduler;
-                        //start log;
-                        //FluentScheduler.JobManager.AddJob(() => Console.WriteLine($"{msg.Name}"), (s) => s.ToRunNow().AndEvery(4).Seconds());
+                        Log.Information($"Recv Name:{commandx.Name},Url: {commandx.Url}");
+
                         FluentScheduler.JobManager.AddJob(
-                                                        () => { 
-                                                            Console.WriteLine($"{msg.Name}");
-                                                            var parser = new PullServ();
-                                                            parser.DoTest();
-
-
-
+                                                        () =>
+                                                        {
+                                                            Console.WriteLine($"{commandx.Name} {commandx.Url}");
+                                                            //TODO:Log Setup;
+                                                            Log.Information($"Recv Name:{commandx.Name},Url: {commandx.Url}");
+                                                            var parser = new PullServ(commandx.Url);
+                                                            parser.StarJob();
                                                         }, (s) => s.ToRunNow());
                     }
-
                 };
                 while (true)
                 {

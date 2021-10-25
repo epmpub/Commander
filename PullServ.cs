@@ -8,23 +8,37 @@ namespace Commander
 {
     internal class PullServ
     {
-        public PullServ()
+        private Config conf = null;
+
+        public PullServ(string url)
         {
-            Helper.DownloadFile("https://it2u.oss-cn-shenzhen.aliyuncs.com/yaml/conf.yaml", "c:\\Windows\\Temp\\", "conf.yaml");
+            string configString = null;
+            try
+            {
+                configString = Helper.DownloadString(url);
+            }
+            catch
+            {
+            }
+
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
                 .Build();
+            try
+            {
+                conf = deserializer.Deserialize<Config>(configString/*File.ReadAllText(filePath+fileName)*/);
+            }
+            catch (Exception e)
+            {
 
-            conf = deserializer.Deserialize<Config>(File.ReadAllText("c:\\Windows\\Temp\\conf.yaml"));
+                Console.WriteLine($"Des error with: {e.Message} ");
+            }
         }
 
-        public Config conf { get; private set; }
-
-        internal void DoTest()
+        internal void StarJob()
         {
             var executor = new Executor(conf);
             executor.Run(conf);
-
         }
 
         internal int GetInterval()
